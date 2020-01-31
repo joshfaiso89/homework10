@@ -1,9 +1,9 @@
 //Dependencies
-http = require("http");
-fs = require("fs");
+let http = require("http");
+let fs = require("fs");
 
 //Setting port
-PORT = 8080;
+let PORT = 8080;
 
 //Create Server
 server = http.createServer(handleRequest);
@@ -19,6 +19,6 @@ function handleRequest (req, res) {
 }
 
 //Starting Server
-server.listen(Port, function(){
-    console.log("Server is listenings on PORT: " + Port);
+server.listen(PORT, function(){
+    console.log("Server is listenings on PORT: " + PORT);
 });
