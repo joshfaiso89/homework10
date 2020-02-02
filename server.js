@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 //static files being served
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("./Develop/public"));
 
 //Function for handling requests and response coming into the server
 function handleRequest (req, res) {
@@ -27,6 +27,7 @@ function handleRequest (req, res) {
         if (err) throw err;
         res.writeHead(200, {"Content-Type": "text/html"});
         res.end(data);
+        console.log(data);
     })
 }
 
@@ -35,17 +36,17 @@ function handleRequest (req, res) {
 
 //routes
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "./public/index.html"));
+    console.log(__dirname);
+    res.sendFile(path.join(__dirname, "./Develop/public/index.html"));
 });
 
-app.get("/notes.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "./public/notes.html"));
+app.get("/notes", (req, res) => {
+    res.sendFile(path.join(__dirname, "./Develop/public/notes.html"));
 });
 
 //Parsing to JSON
 app.get('/api/notes', (req, res) => {
-    readFile('./db/db.json', 'utf-8').then((data) => {
-        console.log(data);
+    readFile('./Develop/Notes/db.json', 'utf-8').then((data) => { console.log(data);
         data = JSON.parse(data);
         return res.json(data);
     });
@@ -54,27 +55,42 @@ app.get('/api/notes', (req, res) => {
 //Writing new notes to JSON
 app.post('/api/notes', (req, res) => {
     let newNote = req.body;
+    console.log(req.body)
 
-    readFile('./db/db.json', 'utf-8').then((data) => {
-        data = JSON.parse(data);
+    readFile('./Develop/Notes/db.json', 'utf-8').then((data) => { data = JSON.parse(data);
 
         data.push(newNote);
         //Appending to json
         data[data.length -1].id = data.length -1;
 
         //writefile for new json after the push
-        writeFile('./db/db.json', JSON.stringify(data));
-    });
+        writeFile('./Develop/Notes/db.json', JSON.stringify(data));
+        res.json(data)
+     });
 });
 
 //Deleting Notes
 app.delete('/api/notes/:id', (req, res) => {
     let id = req.params.id;
     console.log(id);
+
+    readFile('./Develop/Notes/db.json', 'utf-8').then((data) => {
+        data = JSON.parse(data);
+
+        data.splice(id, 1);
+
+        for (let i = 0; i < data.length; i++) {
+            data[i].id = i;
+            
+        }
+    writeFile('./Develop/Notes/db.json', JSON.stringify(data))
+    })
+
+    res.send('deleted');
 })
 
 
 //Starting Server
-server.listen(PORT, function(){
+app.listen(PORT, function(){
     console.log("Server is listenings on PORT: " + PORT);
 });

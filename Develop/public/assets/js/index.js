@@ -52,9 +52,11 @@ var renderActiveNote = function() {
 // Get the note data from the inputs, save it to the db and update the view
 var handleNoteSave = function() {
   var newNote = {
-    title: $noteTitle.val(),
-    text: $noteText.val()
+    title: $(".note-title").val(),
+    text: $(".note-textarea").val()
+    
   };
+  console.log($(".note-title").val())
 
   saveNote(newNote).then(function(data) {
     getAndRenderNotes();
@@ -67,15 +69,13 @@ var handleNoteDelete = function(event) {
   // prevents the click listener for the list from being called when the button inside of it is clicked
   event.stopPropagation();
 
-  var note = $(this)
-    .parent(".list-group-item")
-    .data();
+  var noteId = $(this).attr('data-id');
 
-  if (activeNote.id === note.id) {
+  if (activeNote.id === noteId) {
     activeNote = {};
   }
 
-  deleteNote(note.id).then(function() {
+  deleteNote(noteId).then(function() {
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -96,10 +96,10 @@ var handleNewNoteView = function() {
 // If a note's title or text are empty, hide the save button
 // Or else show it
 var handleRenderSaveBtn = function() {
-  if (!$noteTitle.val().trim() || !$noteText.val().trim()) {
-    $saveNoteBtn.hide();
-  } else {
+  if ($noteTitle.val().trim() || $noteText.val().trim()) {
     $saveNoteBtn.show();
+  } else {
+    $saveNoteBtn.hide();
   }
 };
 
@@ -115,7 +115,7 @@ var renderNoteList = function(notes) {
     var $li = $("<li class='list-group-item'>").data(note);
     var $span = $("<span>").text(note.title);
     var $delBtn = $(
-      "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
+      "<i data-id='" + note.id + "' class='fas fa-trash-alt float-right  text-danger delete-note'>"
     );
 
     $li.append($span, $delBtn);
