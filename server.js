@@ -1,5 +1,4 @@
 //Dependencies
-const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const express = require('express');
@@ -10,8 +9,6 @@ const readFile = util.promisify(fs.readFile);
 //Setting port
 const PORT = process.env.PORT || 8080;
 
-//Create Server
-server = http.createServer(handleRequest);
 
 //Setting up Express app to handle data parsing
 app.use(express.urlencoded({extended: true}));
@@ -20,16 +17,6 @@ app.use(express.json());
 //static files being served
 app.use(express.static("./Develop/public"));
 
-//Function for handling requests and response coming into the server
-function handleRequest (req, res) {
-//using fs to read html
-    fs.readFile(__dirname + "/index.html", function(err,data){
-        if (err) throw err;
-        res.writeHead(200, {"Content-Type": "text/html"});
-        res.end(data);
-        console.log(data);
-    })
-}
 
 //module.exports(app);
 
